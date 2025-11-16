@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>北商熱音社練團室系統</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1><i class="fas fa-guitar"></i> 北商熱音社練團室系統</h1>
+            <p>管理後台 - 郵件服務測試</p>
+        </header>
+
+        <div class="dashboard">
+            <!-- 系統狀態 -->
+            <div class="status-cards">
+                <div class="status-card">
+                    <div class="card-icon backend">
+                        <i class="fas fa-server"></i>
+                    </div>
+                    <div class="card-info">
+                        <h3>後端服務</h3>
+                        <p id="backend-status">檢查中...</p>
+                    </div>
+                </div>
+                <div class="status-card">
+                    <div class="card-icon email">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="card-info">
+                        <h3>郵件服務</h3>
+                        <p id="email-status">待測試</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 郵件測試區 -->
+            <div class="test-section">
+                <h2><i class="fas fa-paper-plane"></i> 郵件發送測試</h2>
+                
+                <div class="test-cards">
+                    <!-- 用戶註冊通知 -->
+                    <div class="test-card">
+                        <h3>用戶註冊通知</h3>
+                        <p>測試新用戶註冊時發送給管理員的郵件</p>
+                        <button class="test-btn" onclick="testUserRegistration()">
+                            <i class="fas fa-user-plus"></i> 發送測試
+                        </button>
+                    </div>
+
+                    <!-- 新預約通知 -->
+                    <div class="test-card">
+                        <h3>新預約通知</h3>
+                        <p>測試用戶預約練團室時發送給管理員的郵件</p>
+                        <button class="test-btn" onclick="testNewBooking()">
+                            <i class="fas fa-calendar-plus"></i> 發送測試
+                        </button>
+                    </div>
+
+                    <!-- 審核結果通知 -->
+                    <div class="test-card">
+                        <h3>審核結果通知</h3>
+                        <p>測試發送帳號審核結果給用戶的郵件</p>
+                        <button class="test-btn" onclick="testApprovalResult()">
+                            <i class="fas fa-check-circle"></i> 發送測試
+                        </button>
+                    </div>
+
+                    <!-- 預約確認通知 -->
+                    <div class="test-card">
+                        <h3>預約確認通知</h3>
+                        <p>測試發送預約確認郵件給用戶</p>
+                        <button class="test-btn" onclick="testBookingConfirmation()">
+                            <i class="fas fa-check-double"></i> 發送測試
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 自訂郵件測試 -->
+            <div class="custom-test">
+                <h2><i class="fas fa-cog"></i> 自訂郵件測試</h2>
+                <div class="form-group">
+                    <label for="emailType">郵件類型:</label>
+                    <select id="emailType" class="form-select">
+                        <option value="user_registration">用戶註冊通知 (管理員)</option>
+                        <option value="new_booking">新預約通知 (管理員)</option>
+                        <option value="approval_result">審核結果通知 (用戶)</option>
+                        <option value="booking_confirmation">預約確認通知 (用戶)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="recipientEmail">收件人郵箱:</label>
+                    <input type="email" id="recipientEmail" class="form-input" 
+                           placeholder="輸入測試郵箱地址" value="11056046@ntub.edu.tw">
+                </div>
+                <button class="test-btn primary" onclick="sendCustomTest()">
+                    <i class="fas fa-rocket"></i> 發送自訂測試郵件
+                </button>
+            </div>
+
+            <!-- 結果顯示 -->
+            <div class="result-section">
+                <h2><i class="fas fa-list"></i> 測試結果</h2>
+                <div id="testResults" class="results-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
