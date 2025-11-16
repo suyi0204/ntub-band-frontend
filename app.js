@@ -1,10 +1,37 @@
-// 後端 API 基礎 URL - 部署後需要更新這個網址
-let API_BASE_URL = 'https://您的後端服務名稱.up.railway.app';
+// 後端 API 基礎 URL - 自動偵測環境
+const API_BASE_URL = (() => {
+  const hostname = window.location.hostname;
+  
+  console.log('🌐 當前環境:', hostname);
+  
+  // 如果是在 Vercel 環境
+  if (hostname.includes('vercel.app')) {
+    return 'https://ntub-band-backend.up.railway.app';
+  }
+  // 如果是在 Railway 環境
+  if (hostname.includes('railway.app')) {
+    return 'https://ntub-band-backend.up.railway.app';
+  }
+  // 如果是本地開發
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    return 'http://localhost:8080';
+  }
+  // 預設使用 Railway 後端
+  return 'https://ntub-band-backend.up.railway.app';
+})();
+
+console.log('🌐 API 基礎 URL:', API_BASE_URL);
 
 // 系統狀態檢查
 async function checkSystemStatus() {
     try {
+        console.log('🔍 檢查系統狀態，API URL:', API_BASE_URL);
         const response = await fetch(`${API_BASE_URL}/api/health`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
         const data = await response.json();
         
         document.getElementById('backend-status').innerHTML = 
@@ -14,10 +41,11 @@ async function checkSystemStatus() {
         // 更新郵件狀態顯示
         document.getElementById('email-status').innerHTML = 
             `<span style="color: #10b981;">✅ 就緒</span><br>
-             <small>發件人: ${data.environment === 'Railway' ? 'Railway 環境' : '本地環境'}</small>`;
+             <small>服務: ${data.emailService || 'Resend'}</small>`;
         
         return true;
     } catch (error) {
+        console.error('❌ 系統狀態檢查失敗:', error);
         document.getElementById('backend-status').innerHTML = 
             `<span style="color: #ef4444;">❌ 連線失敗</span><br>
              <small>${error.message}</small>`;
@@ -48,6 +76,7 @@ async function sendTestEmail(emailData) {
     resultDiv.insertBefore(resultItem, resultDiv.firstChild);
     
     try {
+        console.log('📧 發送郵件請求:', emailData);
         const response = await fetch(`${API_BASE_URL}/api/send-email`, {
             method: 'POST',
             headers: {
@@ -56,9 +85,14 @@ async function sendTestEmail(emailData) {
             body: JSON.stringify(emailData)
         });
         
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
         const data = await response.json();
         
         if (data.success) {
+            console.log('✅ 郵件發送成功:', data.messageId);
             resultItem.className = 'result-item success';
             resultItem.innerHTML = `
                 <div class="result-header">
@@ -77,6 +111,7 @@ async function sendTestEmail(emailData) {
         }
         
     } catch (error) {
+        console.error('❌ 郵件發送失敗:', error);
         resultItem.className = 'result-item error';
         resultItem.innerHTML = `
             <div class="result-header">
@@ -86,13 +121,14 @@ async function sendTestEmail(emailData) {
             <div class="result-message">
                 <i class="fas fa-exclamation-circle" style="color: #ef4444;"></i> 
                 發送失敗: ${error.message}<br>
-                <small>收件人: ${emailData.to}</small>
+                <small>收件人: ${emailData.to}</small><br>
+                <small>API: ${API_BASE_URL}</small>
             </div>
         `;
     }
 }
 
-// 測試函數
+// 測試函數（保持不變）
 function testUserRegistration() {
     const emailData = {
         to: '11056046@ntub.edu.tw',
@@ -247,6 +283,7 @@ function sendCustomTest() {
 
 // 頁面載入時初始化
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 北商熱音社前端介面初始化');
     checkSystemStatus();
     
     // 每30秒檢查一次系統狀態
